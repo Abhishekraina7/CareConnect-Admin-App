@@ -4,7 +4,6 @@ import Logo from '../components/logo';
 import Input from '../components/input'
 import Button from '../components/Button';
 import { router } from 'expo-router';
-import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 export default function LoginScreen() {
@@ -25,10 +24,7 @@ export default function LoginScreen() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-                <Icon name="chevron-left" size={20} color="#007E7E" style={{ marginRight: 10 }} />
-                <Text style={styles.backText}>Back</Text>
-            </TouchableOpacity>
+           
             <View style={styles.content}>
                 <Logo />
                 <Text style={styles.title}>CareConnect</Text>
