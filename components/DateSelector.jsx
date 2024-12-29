@@ -1,6 +1,5 @@
 import React from 'react';
-import { Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
-
+import { ScrollView, StyleSheet, TouchableOpacity, Text } from 'react-native';
 
 const DateItem = ({ day, weekday, isSelected, onSelect }) => (
     <TouchableOpacity
@@ -17,26 +16,31 @@ const DateItem = ({ day, weekday, isSelected, onSelect }) => (
 );
 
 export default function DateSelector() {
-    const [selectedDate, setSelectedDate] = React.useState(11);
+    const [selectedDate, setSelectedDate] = React.useState(null);
+    const [dates, setDates] = React.useState([]);
 
-    const dates = [
-        { day: 9, weekday: 'MON' },
-        { day: 10, weekday: 'TUE' },
-        { day: 11, weekday: 'WED' },
-        { day: 12, weekday: 'THU' },
-        { day: 13, weekday: 'FRI' },
-        { day: 14, weekday: 'SAT' },
-    ];
+    React.useEffect(() => {
+        const today = new Date();
+        const generatedDates = Array.from({ length: 7 }, (_, index) => {
+            const date = new Date(today);
+            date.setDate(today.getDate() + index - 3); // Center the current date
+            const day = date.getDate();
+            const weekday = date.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
+            return { day, weekday };
+        });
+        setDates(generatedDates);
+        setSelectedDate(today.getDate()); // Select today's date by default
+    }, []);
 
     return (
         <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            style={styles.container}
+            contentContainerStyle={styles.container}
         >
-            {dates.map((date) => (
+            {dates.map((date, index) => (
                 <DateItem
-                    key={date.day}
+                    key={index}
                     day={date.day}
                     weekday={date.weekday}
                     isSelected={selectedDate === date.day}
@@ -50,19 +54,20 @@ export default function DateSelector() {
 const styles = StyleSheet.create({
     container: {
         flexGrow: 0,
-        marginVertical: 20,
+        marginVertical: 10,
+        padding: 10,
     },
     dateItem: {
         alignItems: 'center',
         padding: 10,
         marginHorizontal: 5,
-        borderRadius: 10,
+        borderRadius: 15,
         width: 60,
     },
     selectedDate: {
         backgroundColor: '#8B0000',
     },
-    dayText: {
+    dayNumber: {
         fontSize: 18,
         fontWeight: 'bold',
         color: '#333',
@@ -76,4 +81,3 @@ const styles = StyleSheet.create({
         color: '#fff',
     },
 });
-

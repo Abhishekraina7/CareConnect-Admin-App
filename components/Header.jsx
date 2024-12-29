@@ -4,17 +4,17 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 export default function Header({ name, uniqueId }) {
     return (
         <View style={styles.container}>
-            <Image source={require("../assets/images/adminimage.png")} style={styles.profileImage} />
+            <TouchableOpacity style={styles.emergencyButton}>
+                <View style={styles.circle}>
+                    <Image source={require("../assets/images/emergencyicon.png")} style={styles.buttonImage} />
+                </View>
+            </TouchableOpacity>
             <View style={styles.detailsSection}>
                 <Text style={styles.welcomeText}>Welcome,</Text>
                 <Text style={styles.nameText}>{name}</Text>
                 <Text style={styles.detailText}>Unique ID: {uniqueId}</Text>
-                <TouchableOpacity style={styles.emergencyButton}>
-                    <View style={styles.circle}>
-                        <Image source={require("../assets/images/emergencyicon.png")} style={styles.buttonImage} />
-                    </View>
-                </TouchableOpacity>
             </View>
+            <Image source={require("../assets/images/adminimage.png")} style={styles.profileImage} />
         </View>
     );
 }
@@ -22,19 +22,21 @@ export default function Header({ name, uniqueId }) {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#8B0000',
-        padding: 10,
+        padding: 40,
         borderBottomLeftRadius: 20,
         borderBottomRightRadius: 20,
+        flexDirection: 'row', 
         alignItems: 'center',
+        justifyContent: 'space-between', 
     },
     profileImage: {
         width: 70,
         height: 70,
         borderRadius: 50,
-        marginBottom: 10,
     },
     detailsSection: {
         alignItems: 'center',
+        flex: 1, 
     },
     welcomeText: {
         fontSize: 16,
@@ -56,10 +58,10 @@ const styles = StyleSheet.create({
     circle: {
         width: 60,
         height: 60,
-        borderRadius: 30, // Half of the width/height for a perfect circle
-        backgroundColor: '#FFF', // White background
+        borderRadius: 30,
+        backgroundColor: '#FFF', 
         alignItems: 'center',
-        justifyContent: 'center', // Center the image inside the circle
+        justifyContent: 'center', 
     },
     buttonImage: {
         width: 30,

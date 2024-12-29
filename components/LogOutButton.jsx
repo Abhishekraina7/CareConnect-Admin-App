@@ -11,7 +11,7 @@ export default function LogoutButton() {
 
     return (
         <TouchableOpacity style={styles.container} onPress={handleLogout}>
-            <MaterialIcons name="logout" size={24} color="#006400" />
+            <MaterialIcons name="logout" size={24} color="#8B0000" />
             <Text style={styles.text}>Logout</Text>
         </TouchableOpacity>
     );
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         padding: 15,
-        backgroundColor: '#E8F5E9',
+        backgroundColor: '#FFF',
         marginHorizontal: 20,
         marginVertical: 10,
         borderRadius: 10,
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     text: {
         marginLeft: 10,
         fontSize: 16,
-        color: '#006400',
+        color: '#8B0000',
         fontWeight: '500',
     },
 });

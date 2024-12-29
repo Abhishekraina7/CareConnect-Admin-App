@@ -1,6 +1,5 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ScrollView } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import { router } from 'expo-router';
 import DateSelector from '../../components/DateSelector';
 import LogoutButton from '../../components/LogOutButton';
@@ -9,11 +8,7 @@ import Header from '../../components/Header';
 export default function AdminHomeScreen() {
     return (
         <SafeAreaView style={styles.container}>
-            <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-                <Icon name="chevron-left" size={20} color="#007E7E" style={{ marginRight: 10 }} />
-                <Text style={styles.backText}>Back</Text>
-            </TouchableOpacity>
-            <Header 
+                <Header 
                 name="Admin"  // Assuming you will pass the admin name here
                 uniqueId="274572abcd" // Pass the actual unique ID if needed
             />
@@ -43,13 +38,13 @@ export default function AdminHomeScreen() {
                     style={styles.actionButton} 
                     onPress={() => router.push('/screens/patientlist')}
                 >
-                    <Text style={styles.buttonText}>List of Patients</Text>
+                    <Text style={styles.buttonText}>Patient List</Text>
                 </TouchableOpacity>
                 <TouchableOpacity 
                     style={styles.actionButton} 
                     onPress={() => router.push('/screens/nurselist')}
                 >
-                    <Text style={styles.buttonText}>List of Staff</Text>
+                    <Text style={styles.buttonText}>Nurse List</Text>
                 </TouchableOpacity>
             </View>
             <LogoutButton />
@@ -61,17 +56,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-    },
-    backButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginVertical: 10,
-        marginHorizontal: 10,
-    },
-    backText: {
-        marginLeft: 5,
-        fontSize: 16,
-        color: '#007E7E',
     },
     scrollContainer: {
         marginHorizontal: 10,
