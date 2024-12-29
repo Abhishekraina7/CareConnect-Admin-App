@@ -23,7 +23,7 @@ const NurseListScreen = () => {
   };
 
   const handleSearch = () => {
-    const filteredNurses = nursess.filter(nurse =>
+    const filteredNurses = nurses.filter(nurse =>
        nurse.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setNurses(filteredNurses);
@@ -33,7 +33,7 @@ const NurseListScreen = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <MaterialIcons name="arrow-back" size={24} color='#8B0000' />
+          <MaterialIcons name="arrow-back" size={24} color='#000' />
         </TouchableOpacity>
         <Text style={styles.title}>Nurse List</Text>
         <TouchableOpacity onPress={handleAddNurse} style={styles.addButton}>
@@ -48,7 +48,7 @@ const NurseListScreen = () => {
           onChangeText={setSearchQuery}
         />
         <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
-          <MaterialIcons name="search" size={24} color='#8B0000' />
+          <MaterialIcons name="search" size={24} color='#FFF' />
         </TouchableOpacity>
       </View>
       <FlatList
@@ -68,19 +68,19 @@ const NurseListScreen = () => {
             </View>
             <View style={styles.nurseDetails}>
               <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Department:</Text>
+                <Text style={styles.detailLabel}>Department :  </Text>
                 <Text style={styles.detailValue}>{item.department}</Text>
               </View>
               <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Ward:</Text>
+                <Text style={styles.detailLabel}>Ward :  </Text>
                 <Text style={styles.detailValue}>{item.ward}</Text>
               </View>
               <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Nurse ID:</Text>
+                <Text style={styles.detailLabel}>Nurse ID :  </Text>
                 <Text style={styles.detailValue}>{item.nurseId}</Text>
               </View>
               <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Status:</Text>
+              <Text style={styles.detailLabel}>Status :  </Text>
                 <View style={styles.statusContainer}>
                   {item.status === 'Active' ? (
                     <View style={styles.activeStatus}>
@@ -107,65 +107,78 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#f2f2f2',
+    backgroundColor: '#FFF',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 10,
+    padding: 10,
   },
   backButton: {
-    marginRight: 10,
+     padding: 5,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
+    color: '#000',
   },
   addButton: {
-    backgroundColor: '#8B0000',
+    backgroundColor: '#B22222',
     padding: 10,
     borderRadius: 5,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: '#B22222',
+    borderRadius: 8,
+    padding: 5,
     marginBottom: 20,
+    marginHorizontal: 30,
   },
   searchInput: {
     flex: 1,
     height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    padding: 10,
-    marginRight: 10,
+    color: '#FFF',
+    paddingHorizontal: 10,
+    fontSize: 16,
   },
   searchButton: {
+    marginLeft: 5,
     padding: 10,
   },
-  patientItem: {
-    backgroundColor: 'white',
-    padding: 20,
-    marginBottom: 10,
+  nurseItem: {
+    backgroundColor: '#FFF',
     borderRadius: 10,
+    padding: 35,
+    marginBottom: 10,
+    shadowColor: '#000',
+    marginHorizontal: 90,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 2,
   },
-  patientInfo: {
+  nurseInfo: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 10,
   },
   nameInitials: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#ccc',
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#8B0000',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,
   },
   initials: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: 'white',
+    color: '#FFF',
   },
   nameDetails: {
     flex: 1,
@@ -173,29 +186,55 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#000',
   },
   phone: {
     fontSize: 14,
-    color: 'gray',
+    color: '#555',
   },
-  patientDetails: {
+  nurseDetails: {
     marginTop: 10,
   },
   detailRow: {
     flexDirection: 'row',
+    justifyContent: 'space-between', 
+    marginBottom: 5,
+  },
+  detailText: {
+    fontSize: 14,
+    color: '#000',
     marginBottom: 5,
   },
   detailLabel: {
-    fontSize: 14,
     fontWeight: 'bold',
-    width: 120,
+    color: '#000',
   },
   detailValue: {
-    fontSize: 14,
+    flex: 2,
+    color: '#555',
   },
-  patientList: {
+  nurseList: {
     flex: 1,
   },
+  statusContainer: {
+    flexDirection: 'row',
+  },
+  activeStatus: {
+    backgroundColor: 'green',
+    paddingVertical: 3,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+  },
+  offlineStatus: {
+    backgroundColor: 'gray',
+    paddingVertical: 3,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+  },
+  statusText: {
+    color: '#FFF',
+  },
 });
+
 
 export default NurseListScreen;
