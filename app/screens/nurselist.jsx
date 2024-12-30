@@ -1,39 +1,75 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, FlatList } from 'react-native';
-import { router } from 'expo-router'; 
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  SafeAreaView,
+  FlatList,
+} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons'; // For add and search icons
+import { useFocusEffect } from '@react-navigation/native';
 
 const NurseListScreen = () => {
-   const [nurses, setNurses] = useState([
-    {
-      name: 'Waden Warren',
-      phone: '9876534523',
-      department: 'Cardiology',
-      ward: '3',
-      nurseId: '1234abc',
-      status: 'Active',
-    },
-   
-  ]);
-
+  const [nurses, setNurses] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Load nurse list from AsyncStorage
+  const loadNurses = async () => {
+    try {
+      const storedNurses = await AsyncStorage.getItem('nurseList');
+      if (storedNurses) {
+        setNurses(JSON.parse(storedNurses));
+      }
+    } catch (error) {
+      console.error('Failed to load nurse data:', error);
+    }
+  };
+
+  // Save nurse list to AsyncStorage
+  const saveNurses = async (nursesToSave) => {
+    try {
+      await AsyncStorage.setItem('nurseList', JSON.stringify(nursesToSave));
+    } catch (error) {
+      console.error('Failed to save nurse data:', error);
+    }
+  };
+
+  // Handle adding a new nurse (navigate to AddNurse screen)
   const handleAddNurse = () => {
     router.push('/screens/addNurse');
   };
 
+  // Handle searching nurses by name
   const handleSearch = () => {
-    const filteredNurses = nurses.filter(nurse =>
-       nurse.name.toLowerCase().includes(searchQuery.toLowerCase())
+    const filteredNurses = nurses.filter((nurse) =>
+      nurse.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setNurses(filteredNurses);
   };
 
+  // Handle deleting a nurse from the list
+  const handleDeleteNurse = async (nurseId) => {
+    const updatedNurses = nurses.filter((nurse) => nurse.nurseId !== nurseId);
+    setNurses(updatedNurses);
+    await saveNurses(updatedNurses); // Save the updated list to AsyncStorage
+  };
+
+  // Use focus effect to reload the list every time the screen is focused
+  useFocusEffect(
+    React.useCallback(() => {
+      loadNurses();
+    }, [])
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <MaterialIcons name="arrow-back" size={24} color='#000' />
+        <TouchableOpacity onPress={() => router.push('/screens/adminHome')} style={styles.backButton}>
+          <MaterialIcons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
         <Text style={styles.title}>Nurse List</Text>
         <TouchableOpacity onPress={handleAddNurse} style={styles.addButton}>
@@ -48,55 +84,53 @@ const NurseListScreen = () => {
           onChangeText={setSearchQuery}
         />
         <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
-          <MaterialIcons name="search" size={24} color='#FFF' />
+          <MaterialIcons name="search" size={24} color="#FFF" />
         </TouchableOpacity>
       </View>
       <FlatList
         data={nurses}
-        renderItem={({ item }) => (
-          <View style={styles.nurseItem}>
-            <View style={styles.nurseInfo}>
-              <View style={styles.nameInitials}>
-                <Text style={styles.initials}>
-                  {item.name.split(' ')[0][0] + item.name.split(' ')[1][0]}
-                </Text>
+        renderItem={({ item }) => {
+          const initials = item.name
+            ? item.name.split(' ').map((word) => word[0]).join('').slice(0, 2)
+            : 'NA';
+
+          return (
+            <View style={styles.nurseItem}>
+              <View style={styles.nurseInfo}>
+                <View style={styles.nameInitials}>
+                  <Text style={styles.initials}>{initials}</Text>
+                </View>
+                <View style={styles.nameDetails}>
+                  <Text style={styles.name}>{item.name || 'Unknown'}</Text>
+                  <Text style={styles.phone}>{item.mobileOrEmail}</Text>
+                </View>
               </View>
-              <View style={styles.nameDetails}>
-                <Text style={styles.name}>{item.name}</Text>
-                <Text style={styles.phone}>{item.phone}</Text>
+              <View style={styles.nurseDetails}>
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Department: </Text>
+                  <Text style={styles.detailValue}>{item.department || 'N/A'}</Text>
+                </View>
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Ward: </Text>
+                  <Text style={styles.detailValue}>{item.wardNo}</Text>
+                </View>
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Nurse ID: </Text>
+                  <Text style={styles.detailValue}>{item.nurseId || 'N/A'}</Text>
+                </View>
               </View>
+              {/* Delete Button */}
+              <TouchableOpacity
+                style={styles.deleteButton}
+                onPress={() => handleDeleteNurse(item.nurseId)}
+              >
+                <Text style={styles.deleteButtonText}>Delete</Text>
+              </TouchableOpacity>
             </View>
-            <View style={styles.nurseDetails}>
-              <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Department :  </Text>
-                <Text style={styles.detailValue}>{item.department}</Text>
-              </View>
-              <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Ward :  </Text>
-                <Text style={styles.detailValue}>{item.ward}</Text>
-              </View>
-              <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Nurse ID :  </Text>
-                <Text style={styles.detailValue}>{item.nurseId}</Text>
-              </View>
-              <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Status :  </Text>
-                <View style={styles.statusContainer}>
-                  {item.status === 'Active' ? (
-                    <View style={styles.activeStatus}>
-                      <Text style={styles.statusText}>Active</Text>
-                    </View>
-                  ) : (
-                    <View style={styles.offlineStatus}>
-                      <Text style={styles.statusText}>Offline</Text>
-                    </View>
-                  )}
-            </View>
-          </View>
-          </View>
-          </View>
-        )}
+          );
+        }}
         keyExtractor={(item) => item.nurseId}
+        
         style={styles.nurseList}
       />
     </SafeAreaView>
@@ -104,11 +138,7 @@ const NurseListScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#FFF',
-  },
+  container: { flex: 1, padding: 20, backgroundColor: '#FFF' },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -117,7 +147,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   backButton: {
-     padding: 5,
+    padding: 5,
   },
   title: {
     fontSize: 24,
@@ -152,14 +182,15 @@ const styles = StyleSheet.create({
   nurseItem: {
     backgroundColor: '#FFF',
     borderRadius: 10,
-    padding: 35,
+    padding: 20,
     marginBottom: 10,
     shadowColor: '#000',
-    marginHorizontal: 90,
+    
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 2,
+    width: 300,
   },
   nurseInfo: {
     flexDirection: 'row',
@@ -197,12 +228,7 @@ const styles = StyleSheet.create({
   },
   detailRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between', 
-    marginBottom: 5,
-  },
-  detailText: {
-    fontSize: 14,
-    color: '#000',
+    justifyContent: 'space-between',
     marginBottom: 5,
   },
   detailLabel: {
@@ -216,25 +242,18 @@ const styles = StyleSheet.create({
   nurseList: {
     flex: 1,
   },
-  statusContainer: {
-    flexDirection: 'row',
+  deleteButton: {
+    position: 'absolute',
+    right: 10,
+    top: 10,
+    backgroundColor: 'red',
+    padding: 10,
+    borderRadius: 20,
   },
-  activeStatus: {
-    backgroundColor: 'green',
-    paddingVertical: 3,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-  },
-  offlineStatus: {
-    backgroundColor: 'gray',
-    paddingVertical: 3,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-  },
-  statusText: {
+  deleteButtonText: {
     color: '#FFF',
+    fontWeight: 'bold',
   },
 });
-
 
 export default NurseListScreen;

@@ -4,17 +4,17 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 export default function Header({ name, uniqueId }) {
     return (
         <View style={styles.container}>
-            <TouchableOpacity style={styles.emergencyButton}>
-                <View style={styles.circle}>
-                    <Image source={require("../assets/images/emergencyicon.png")} style={styles.buttonImage} />
-                </View>
-            </TouchableOpacity>
+            <Image source={require("../assets/images/adminimage.png")} style={styles.profileImage} />
             <View style={styles.detailsSection}>
                 <Text style={styles.welcomeText}>Welcome,</Text>
                 <Text style={styles.nameText}>{name}</Text>
                 <Text style={styles.detailText}>Unique ID: {uniqueId}</Text>
             </View>
-            <Image source={require("../assets/images/adminimage.png")} style={styles.profileImage} />
+            <TouchableOpacity style={styles.emergencyButton}>
+                <View style={styles.circle}>
+                    <Image source={require("../assets/images/emergencyicon.png")} style={styles.buttonImage} />
+                </View>
+            </TouchableOpacity>
         </View>
     );
 }
