@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView, Alert, FlatList } from 'react-native';
 import { router } from 'expo-router';
-import { MaterialIcons } from '@expo/vector-icons'; 
+import { MaterialIcons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Swipeable } from 'react-native-gesture-handler'; // Import Swipeable
 
 const AddNurseScreen = () => {
   const [nurseId, setNurseId] = useState('');
@@ -12,16 +15,16 @@ const AddNurseScreen = () => {
   const [nurses, setNurses] = useState([]);
 
   const handleAddNurse = () => {
-    // Validate input fields
+    // Basic validation
     if (!nurseId || !name || !mobileOrEmail || !department || !wardNo) {
       Alert.alert('Error', 'Please fill all fields.');
       return;
     }
 
-    // Add nurse to the list
-    setNurses([...nurses, { nurseId, name, mobileOrEmail, department, wardNo }]);
+    const newNurse = { nurseId, name, mobileOrEmail, department, wardNo };
+    setNurses([...nurses, newNurse]);
 
-    // Reset form fields
+    // Reset input fields after adding nurse
     setNurseId('');
     setName('');
     setMobileOrEmail('');
@@ -29,15 +32,38 @@ const AddNurseScreen = () => {
     setWardNo('');
   };
 
+  const handleSwipeRight = async (nurse) => {
+    try {
+      // Get existing list of nurses from AsyncStorage
+      const storedNurses = JSON.parse(await AsyncStorage.getItem('nurseList')) || [];
+
+      // Add the current nurse to the stored list
+      await AsyncStorage.setItem('nurseList', JSON.stringify([...storedNurses, nurse]));
+
+      // Remove the nurse from local state
+      setNurses(nurses.filter((n) => n.nurseId !== nurse.nurseId));
+    } catch (error) {
+      console.error('Error transferring nurse:', error);
+    }
+  };
+
+  const renderRightActions = () => (
+    <View style={styles.completeContainer}>
+      <Text style={styles.completeText}>Add to List</Text>
+    </View>
+  );
+
   return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity onPress={() => router.push('/screens/nurselist')} style={styles.backButton}>
+      {/* Back Button */}
+      <TouchableOpacity onPress={() => router.push('/screens/nurselist')} style={styles.backButton} activeOpacity={0.7}>
         <MaterialIcons name="arrow-back" size={28} color="#000" />
       </TouchableOpacity>
-
-      <Text style={styles.title}>ADD Nurse</Text>
+      <Text style={styles.title}>Add Nurse</Text>
 
       <ScrollView contentContainerStyle={styles.formContainer}>
+        {/* Form Fields */}
         <View style={styles.inputRow}>
           <Text style={styles.label}>Nurse ID:</Text>
           <TextInput
@@ -89,25 +115,32 @@ const AddNurseScreen = () => {
         </View>
 
         <TouchableOpacity style={styles.button} onPress={handleAddNurse}>
-          <Text style={styles.buttonText}>ADD</Text>
+          <Text style={styles.buttonText}>Add Nurse</Text>
         </TouchableOpacity>
       </ScrollView>
 
+      {/* Swipeable Nurse List */}
       <FlatList
         data={nurses}
         renderItem={({ item }) => (
-          <View style={styles.nurseItem}>
-            <Text style={styles.nurseDetail}>Nurse ID : {item.nurseId}</Text>
-            <Text style={styles.nurseDetail}>Name : {item.name}</Text>
-            <Text style={styles.nurseDetail}>Mobile/Email : {item.mobileOrEmail}</Text>
-            <Text style={styles.nurseDetail}>Department : {item.department}</Text>
-            <Text style={styles.nurseDetail}>Ward No : {item.wardNo}</Text>
-          </View>
+          <Swipeable
+            renderRightActions={renderRightActions}
+            onSwipeableRightOpen={() => handleSwipeRight(item)}
+          >
+            <View style={styles.nurseItem}>
+              <Text style={styles.nurseDetail}>Nurse ID: {item.nurseId}</Text>
+              <Text style={styles.nurseDetail}>Name: {item.name}</Text>
+              <Text style={styles.nurseDetail}>Mobile/Email: {item.mobileOrEmail}</Text>
+              <Text style={styles.nurseDetail}>Department: {item.department}</Text>
+              <Text style={styles.nurseDetail}>Ward No: {item.wardNo}</Text>
+            </View>
+          </Swipeable>
         )}
         keyExtractor={(item) => item.nurseId}
         style={styles.nurseList}
       />
     </SafeAreaView>
+    </GestureHandlerRootView>
   );
 };
 
@@ -164,6 +197,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 20,
     left: 20,
+    padding: 10,  // Make sure the button has a clickable area
+    backgroundColor: 'rgba(255, 255, 255, 0.7)', // Optional: Add a background for better visibility
+    borderRadius: 50,  // Optional: Round the edges for a cleaner look
+    zIndex: 1,  // Ensure the button is on top of other elements
   },
   nurseList: {
     flex: 1,
@@ -175,10 +212,22 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'gray',
     borderRadius: 5,
+    backgroundColor: '#FFF',
   },
   nurseDetail: {
     fontSize: 16,
     marginBottom: 5,
+  },
+  completeContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'green',
+    padding: 20,
+    borderRadius: 10,
+  },
+  completeText: {
+    color: 'white',
+    fontSize: 16,
   },
 });
 
