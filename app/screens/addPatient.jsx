@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView, Alert, FlatList } from 'react-native';
 import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';  // Import axios
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Swipeable } from 'react-native-gesture-handler'; // Import Swipeable
+import { Swipeable } from 'react-native-gesture-handler'; 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const AddPatientScreen = () => {
@@ -16,23 +16,47 @@ const AddPatientScreen = () => {
   const [admitDate, setAdmitDate] = useState('');
   const [patients, setPatients] = useState([]);
 
-  const handleAddPatient = () => {
-    // Basic validation
+  
+  const handleAddPatient = async () => {
+   
     if (!patientId || !name || !diagnosis || !wardBedNo || !mobile || !admitDate) {
       Alert.alert('Error', 'Please fill all fields.');
       return;
     }
 
+    // Patient data to send to the backend
     const newPatient = { patientId, name, diagnosis, wardBedNo, mobile, admitDate };
-    setPatients([...patients, newPatient]);
 
-    // Reset input fields after adding patient
-    setPatientId('');
-    setName('');
-    setDiagnosis('');
-    setWardBedNo('');
-    setMobile('');
-    setAdmitDate('');
+    try {
+      // Send data to backend API (POST request)
+      const response = await axios.post('http://localhost:5000/api/patients', newPatient);
+      
+      // If successful, reset the fields and update patients state
+      if (response.status === 201) {
+        setPatients([...patients, newPatient]);
+        setPatientId('');
+        setName('');
+        setDiagnosis('');
+        setWardBedNo('');
+        setMobile('');
+        setAdmitDate('');
+      } else {
+        Alert.alert('Error', 'Failed to add patient');
+      }
+    } catch (error) {
+      console.error('Error adding patient:', error);
+      Alert.alert('Error', 'Failed to add patient');
+    }
+  };
+
+  // Fetch all patients from the backend (GET request)
+  const fetchPatients = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/patients');
+      setPatients(response.data);
+    } catch (error) {
+      console.error('Error fetching patients:', error);
+    }
   };
 
   const handleSwipeRight = async (patient) => {
@@ -56,107 +80,110 @@ const AddPatientScreen = () => {
     </View>
   );
 
+  // Fetch patients when component mounts
+  React.useEffect(() => {
+    fetchPatients();
+  }, []);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-    <SafeAreaView style={styles.container}>
-      {/* New Back Button */}
-      <TouchableOpacity onPress={() => router.push('/screens/patientlist')} style={styles.backButton} activeOpacity={0.7}>
-        <MaterialIcons name="arrow-back" size={28} color="#000" />
-      </TouchableOpacity>
-      <Text style={styles.title}>Add Patient</Text>
-
-      <ScrollView contentContainerStyle={styles.formContainer}>
-        {/* Form Fields */}
-        <View style={styles.inputRow}>
-          <Text style={styles.label}>Patient ID:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter Patient ID"
-            value={patientId}
-            onChangeText={setPatientId}
-          />
-        </View>
-
-        <View style={styles.inputRow}>
-          <Text style={styles.label}>Name:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter Name"
-            value={name}
-            onChangeText={setName}
-          />
-        </View>
-
-        <View style={styles.inputRow}>
-          <Text style={styles.label}>Mobile Number:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter Mobile Number"
-            value={mobile}
-            onChangeText={setMobile}
-            keyboardType="phone-pad"
-          />
-        </View>
-
-        <View style={styles.inputRow}>
-          <Text style={styles.label}>Diagnosis:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter Diagnosis"
-            value={diagnosis}
-            onChangeText={setDiagnosis}
-          />
-        </View>
-
-        <View style={styles.inputRow}>
-          <Text style={styles.label}>Ward/Bed No:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter Ward/Bed No"
-            value={wardBedNo}
-            onChangeText={setWardBedNo}
-          />
-        </View>
-
-        <View style={styles.inputRow}>
-          <Text style={styles.label}>Admit Date:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter Admit Date (YYYY-MM-DD)"
-            value={admitDate}
-            onChangeText={setAdmitDate}
-            keyboardType="default"
-          />
-        </View>
-
-        <TouchableOpacity style={styles.button} onPress={handleAddPatient}>
-          <Text style={styles.buttonText}>Add Patient</Text>
+      <SafeAreaView style={styles.container}>
+        {/* Back Button */}
+        <TouchableOpacity onPress={() => router.push('/screens/patientlist')} style={styles.backButton} activeOpacity={0.7}>
+          <MaterialIcons name="arrow-back" size={28} color="#000" />
         </TouchableOpacity>
-      </ScrollView>
+        <Text style={styles.title}>Add Patient</Text>
 
-      {/* Swipeable Patient List */}
-      <FlatList
-        data={patients}
-        renderItem={({ item }) => (
-          
-          <Swipeable
-            renderRightActions={renderRightActions}
-            onSwipeableRightOpen={() => handleSwipeRight(item)}
-          >
-            <View style={styles.patientItem}>
-              <Text style={styles.patientDetail}>Patient ID: {item.patientId}</Text>
-              <Text style={styles.patientDetail}>Name: {item.name}</Text>
-              <Text style={styles.patientDetail}>Mobile: {item.mobile}</Text>
-              <Text style={styles.patientDetail}>Diagnosis: {item.diagnosis}</Text>
-              <Text style={styles.patientDetail}>Ward/Bed No: {item.wardBedNo}</Text>
-              <Text style={styles.patientDetail}>Admit Date: {item.admitDate}</Text>
-            </View>
-          </Swipeable>
-          
-        )}
-        keyExtractor={(item) => item.patientId}
-      />
-    </SafeAreaView>
+        <ScrollView contentContainerStyle={styles.formContainer}>
+          {/* Form Fields */}
+          <View style={styles.inputRow}>
+            <Text style={styles.label}>Patient ID:</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter Patient ID"
+              value={patientId}
+              onChangeText={setPatientId}
+            />
+          </View>
+
+          <View style={styles.inputRow}>
+            <Text style={styles.label}>Name:</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter Name"
+              value={name}
+              onChangeText={setName}
+            />
+          </View>
+
+          <View style={styles.inputRow}>
+            <Text style={styles.label}>Mobile Number:</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter Mobile Number"
+              value={mobile}
+              onChangeText={setMobile}
+              keyboardType="phone-pad"
+            />
+          </View>
+
+          <View style={styles.inputRow}>
+            <Text style={styles.label}>Diagnosis:</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter Diagnosis"
+              value={diagnosis}
+              onChangeText={setDiagnosis}
+            />
+          </View>
+
+          <View style={styles.inputRow}>
+            <Text style={styles.label}>Ward/Bed No:</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter Ward/Bed No"
+              value={wardBedNo}
+              onChangeText={setWardBedNo}
+            />
+          </View>
+
+          <View style={styles.inputRow}>
+            <Text style={styles.label}>Admit Date:</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter Admit Date (YYYY-MM-DD)"
+              value={admitDate}
+              onChangeText={setAdmitDate}
+              keyboardType="default"
+            />
+          </View>
+
+          <TouchableOpacity style={styles.button} onPress={handleAddPatient}>
+            <Text style={styles.buttonText}>Add Patient</Text>
+          </TouchableOpacity>
+        </ScrollView>
+
+        {/* Swipeable Patient List */}
+        <FlatList
+          data={patients}
+          renderItem={({ item }) => (
+            <Swipeable
+              renderRightActions={renderRightActions}
+              onSwipeableRightOpen={() => handleSwipeRight(item)}
+            >
+              <View style={styles.patientItem}>
+                <Text style={styles.patientDetail}>Patient ID: {item.patientId}</Text>
+                <Text style={styles.patientDetail}>Name: {item.name}</Text>
+                <Text style={styles.patientDetail}>Mobile: {item.mobile}</Text>
+                <Text style={styles.patientDetail}>Diagnosis: {item.diagnosis}</Text>
+                <Text style={styles.patientDetail}>Ward/Bed No: {item.wardBedNo}</Text>
+                <Text style={styles.patientDetail}>Admit Date: {item.admitDate}</Text>
+              </View>
+            </Swipeable>
+          )}
+          keyExtractor={(item) => item.patientId}
+        />
+      </SafeAreaView>
     </GestureHandlerRootView>
   );
 };
@@ -214,12 +241,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 20,
     left: 20,
-    padding: 10,  // Make sure the button has a clickable area
-    backgroundColor: 'rgba(255, 255, 255, 0.7)', // Optional: Add a background for better visibility
-    borderRadius: 50,  // Optional: Round the edges for a cleaner look
-    zIndex: 1,  // Ensure the button is on top of other elements
+    padding: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    borderRadius: 50,
+    zIndex: 1,
   },
-  
   patientItem: {
     marginBottom: 10,
     padding: 10,

@@ -8,7 +8,7 @@ import {
   SafeAreaView,
   FlatList,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons'; // For add and search icons
 import { useFocusEffect } from '@react-navigation/native';
@@ -17,24 +17,13 @@ const NurseListScreen = () => {
   const [nurses, setNurses] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Load nurse list from AsyncStorage
+  // Load nurse list from the backend
   const loadNurses = async () => {
     try {
-      const storedNurses = await AsyncStorage.getItem('nurseList');
-      if (storedNurses) {
-        setNurses(JSON.parse(storedNurses));
-      }
+      const response = await axios.get('http://localhost:5000/api/nurses');  // Replace with your backend URL
+      setNurses(response.data);
     } catch (error) {
       console.error('Failed to load nurse data:', error);
-    }
-  };
-
-  // Save nurse list to AsyncStorage
-  const saveNurses = async (nursesToSave) => {
-    try {
-      await AsyncStorage.setItem('nurseList', JSON.stringify(nursesToSave));
-    } catch (error) {
-      console.error('Failed to save nurse data:', error);
     }
   };
 
@@ -53,9 +42,13 @@ const NurseListScreen = () => {
 
   // Handle deleting a nurse from the list
   const handleDeleteNurse = async (nurseId) => {
-    const updatedNurses = nurses.filter((nurse) => nurse.nurseId !== nurseId);
-    setNurses(updatedNurses);
-    await saveNurses(updatedNurses); // Save the updated list to AsyncStorage
+    try {
+      await axios.delete(`http://localhost:5000/nurses/${nurseId}`);
+      // Remove the deleted nurse from the list without reloading from backend
+      setNurses(nurses.filter((nurse) => nurse.nurseId !== nurseId));
+    } catch (error) {
+      console.error('Error deleting nurse:', error);
+    }
   };
 
   // Use focus effect to reload the list every time the screen is focused
@@ -247,8 +240,8 @@ const styles = StyleSheet.create({
     right: 10,
     top: 10,
     backgroundColor: 'red',
-    padding: 10,
-    borderRadius: 20,
+    padding: 5,
+    borderRadius: 5,
   },
   deleteButtonText: {
     color: '#FFF',

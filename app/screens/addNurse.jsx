@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView, Alert, FlatList } from 'react-native';
 import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios'; // **Added Axios import**
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Swipeable } from 'react-native-gesture-handler'; // Import Swipeable
+import { Swipeable } from 'react-native-gesture-handler';
 
 const AddNurseScreen = () => {
   const [nurseId, setNurseId] = useState('');
@@ -14,23 +15,46 @@ const AddNurseScreen = () => {
   const [wardNo, setWardNo] = useState('');
   const [nurses, setNurses] = useState([]);
 
-  const handleAddNurse = () => {
-    // Basic validation
+  const handleAddNurse = async () => { 
     if (!nurseId || !name || !mobileOrEmail || !department || !wardNo) {
       Alert.alert('Error', 'Please fill all fields.');
       return;
     }
 
     const newNurse = { nurseId, name, mobileOrEmail, department, wardNo };
-    setNurses([...nurses, newNurse]);
 
-    // Reset input fields after adding nurse
-    setNurseId('');
-    setName('');
-    setMobileOrEmail('');
-    setDepartment('');
-    setWardNo('');
+    try {
+      await axios.post('http://localhost:5000/api/nurses', newNurse);
+
+      
+      setNurses([...nurses, newNurse]);
+
+     
+      setNurseId('');
+      setName('');
+      setMobileOrEmail('');
+      setDepartment('');
+      setWardNo('');
+
+      Alert.alert('Success', 'Nurse added successfully.');
+    } catch (error) {
+      console.error('Error adding nurse:', error);
+      Alert.alert('Error', 'Failed to add nurse.');
+    }
   };
+
+  const fetchNurses = async () => { 
+    try {
+      const response = await axios.get('http://localhost:5000/api/nurses');
+      setNurses(response.data); 
+    } catch (error) {
+      console.error('Error fetching nurses:', error);
+    }
+  };
+
+  useEffect(() => { 
+    fetchNurses(); 
+  }, []);
 
   const handleSwipeRight = async (nurse) => {
     try {

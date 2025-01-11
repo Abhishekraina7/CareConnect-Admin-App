@@ -21,10 +21,8 @@ const PatientListScreen = () => {
   // Load the patient list from AsyncStorage
   const loadPatients = async () => {
     try {
-      const storedPatients = await AsyncStorage.getItem('patientList');
-      if (storedPatients) {
-        setPatients(JSON.parse(storedPatients));
-      }
+      const response = await axios.get('http://localhost:5000/api/patients');
+        setPatients(response.data);
     } catch (error) {
       console.error('Failed to load patient data:', error);
     }
@@ -54,9 +52,13 @@ const PatientListScreen = () => {
 
   // Handle deleting a patient from the list
   const handleDeletePatient = async (patientId) => {
-    const updatedPatients = patients.filter((patient) => patient.patientId !== patientId);
-    setPatients(updatedPatients);
-    await savePatients(updatedPatients); // Save the updated list to AsyncStorage
+    try {
+      await axios.delete(`http://localhost:5000/api/patients/${patientId}`);
+      // Remove the deleted patient from the list without reloading from backend
+      setPatients(patients.filter((patient) => patient.patientId !== patientId));
+    } catch (error) {
+      console.error('Error deleting nurse:', error);
+    }
   };
 
   useFocusEffect(
