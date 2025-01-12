@@ -16,7 +16,9 @@ import { useFocusEffect } from '@react-navigation/native';
 
 const NurseListScreen = () => {
   const [nurses, setNurses] = useState([]);
+  const [columns, setColumns] = useState(5);
   const [searchQuery, setSearchQuery] = useState('');
+
 
   // Load nurse list from the backend
   const loadNurses = async () => {
@@ -87,6 +89,7 @@ const NurseListScreen = () => {
         </TouchableOpacity>
       </View>
       <FlatList
+      key={columns}
         data={nurses}
         renderItem={({ item }) => {
           const initials = item.name
@@ -129,6 +132,8 @@ const NurseListScreen = () => {
           );
         }}
         keyExtractor={(item) => item.nurseId}
+        numColumns={columns} // Use dynamic column count
+        contentContainerStyle={styles.listContainer} // Add spacing between rows
         
         style={styles.nurseList}
       />
@@ -178,18 +183,23 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     padding: 10,
   },
+  listContainer: {
+    paddingHorizontal: 50,
+  },
   nurseItem: {
     backgroundColor: '#FFF',
     borderRadius: 10,
     padding: 20,
-    marginBottom: 10,
+    margin: 10,
     shadowColor: '#000',
     
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 2,
-    width: 300,
+    height:200,
+    width:250,
+    
   },
   nurseInfo: {
     flexDirection: 'row',
