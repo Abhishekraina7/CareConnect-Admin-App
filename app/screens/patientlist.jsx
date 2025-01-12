@@ -17,6 +17,7 @@ import { useFocusEffect } from '@react-navigation/native';
 
 const PatientListScreen = () => {
   const [patients, setPatients] = useState([]);
+ const [columns, setColumns] = useState(5);
   const [searchQuery, setSearchQuery] = useState('');
 
   // Load the patient list from AsyncStorage
@@ -65,6 +66,11 @@ const PatientListScreen = () => {
       console.error('Error deleting patient:', error);
     }
   };
+  const formatAdmitDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0]; // Formats to YYYY-MM-DD
+  };
 
 
   useFocusEffect(
@@ -96,6 +102,7 @@ const PatientListScreen = () => {
         </TouchableOpacity>
       </View>
       <FlatList
+      key={columns}
         data={patients}
         renderItem={({ item }) => {
           const initials = item.name
@@ -126,7 +133,12 @@ const PatientListScreen = () => {
                   <Text style={styles.detailLabel}>Patient ID: </Text>
                   <Text style={styles.detailValue}>{item.patientId || 'N/A'}</Text>
                 </View>
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Admit Date: </Text>
+                  <Text style={styles.detailValue}>{formatAdmitDate(item.admitDate)}</Text>
+                </View>
               </View>
+              
               {/* Delete Button */}
               <TouchableOpacity
                 style={styles.deleteButton}
@@ -138,6 +150,8 @@ const PatientListScreen = () => {
           );
         }}
         keyExtractor={(item) => item.patientId}
+        numColumns={columns} // Use dynamic column count
+        contentContainerStyle={styles.listContainer}
         
       />
     </SafeAreaView>
@@ -186,11 +200,15 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     padding: 10,
   },
+  listContainer: {
+    paddingLeft: 50, // Adjust the padding as needed
+  },
   patientItem: {
     backgroundColor: '#FFF',
     borderRadius: 10,
     padding: 20,
-    marginBottom: 10,
+    margin: 10, // Adjust margin for horizontal alignment
+    
     shadowColor: '#000',
     
     shadowOffset: { width: 0, height: 2 },
@@ -198,7 +216,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
     position: 'relative',
-    width:300,
+    height:200,
+    width:250,
   },
   patientInfo: {
     flexDirection: 'row',
