@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView, Alert, FlatList } from 'react-native';
 import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import axios from 'axios';  // Import axios
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Swipeable } from 'react-native-gesture-handler'; 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -58,6 +59,12 @@ const AddPatientScreen = () => {
       console.error('Error fetching patients:', error);
     }
   };
+    useEffect(() => { 
+      fetchPatients(); 
+    }, []);
+    
+  
+  
 
   const handleSwipeRight = async (patient) => {
     try {
@@ -81,9 +88,7 @@ const AddPatientScreen = () => {
   );
 
   // Fetch patients when component mounts
-  React.useEffect(() => {
-    fetchPatients();
-  }, []);
+  
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

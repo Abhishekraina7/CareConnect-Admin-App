@@ -9,6 +9,7 @@ import {
   FlatList,
   Alert,
 } from 'react-native';
+import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -27,7 +28,6 @@ const PatientListScreen = () => {
       console.error('Failed to load patient data:', error);
     }
   };
-
   // Save the patient list to AsyncStorage
   const savePatients = async (patientsToSave) => {
     try {
@@ -36,6 +36,9 @@ const PatientListScreen = () => {
       console.error('Failed to save patient data:', error);
     }
   };
+
+
+
 
   // Handle search functionality
   const handleSearch = () => {
