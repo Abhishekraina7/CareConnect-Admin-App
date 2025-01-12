@@ -56,13 +56,16 @@ const PatientListScreen = () => {
   // Handle deleting a patient from the list
   const handleDeletePatient = async (patientId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/patients/${patientId}`);
+      await axios.delete(`http://localhost:5000/api/patients/${patientId}`,{
+        method: 'DELETE',
+      });
       // Remove the deleted patient from the list without reloading from backend
       setPatients(patients.filter((patient) => patient.patientId !== patientId));
     } catch (error) {
-      console.error('Error deleting nurse:', error);
+      console.error('Error deleting patient:', error);
     }
   };
+
 
   useFocusEffect(
     React.useCallback(() => {
