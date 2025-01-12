@@ -43,14 +43,19 @@ const NurseListScreen = () => {
   // Handle deleting a nurse from the list
   const handleDeleteNurse = async (nurseId) => {
     try {
-      await axios.delete(`http://localhost:5000/nurses/${nurseId}`);
-      // Remove the deleted nurse from the list without reloading from backend
-      setNurses(nurses.filter((nurse) => nurse.nurseId !== nurseId));
+      const response = await fetch(`http://localhost:5000/api/nurses/${nurseId}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        setNurses(nurses.filter((nurse) => nurse.nurseId !== nurseId));
+      } else {
+        console.error('Failed to delete nurse');
+      }
     } catch (error) {
-      console.error('Error deleting nurse:', error);
+      console.error('Error:', error);
     }
   };
-
+  
   // Use focus effect to reload the list every time the screen is focused
   useFocusEffect(
     React.useCallback(() => {
