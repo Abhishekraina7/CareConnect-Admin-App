@@ -1,19 +1,37 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Alert } from 'react-native';
 import Logo from '../components/logo';
 import Input from '../components/input'
 import Button from '../components/Button';
 import { router } from 'expo-router';
-
+import axios from 'axios';
 
 export default function LoginScreen() {
-    const [id, setId] = useState('');
+    const [uniqueId, setId] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
         // Handle login logic here
-        console.log('Login attempted with:', { id, password });
-        router.push('/screens/adminHome')
+        setLoading(true);
+        try {
+            // Make a POST request to the backend API
+            await axios.post('http://localhost:5000/api/admin', {
+                uniqueId,
+                password,
+            });
+        Alert.alert('Success', 'Login successful');
+        router.push('/screens/adminHome');
+        }
+        catch (error) {
+            if (error.response) {
+                Alert.alert('Error', error.response.data.message || 'Invalid login credentials');
+            } else {
+                Alert.alert('Error', 'Something went wrong. Please try again.');
+            }
+        } finally {
+            setLoading(false);
+            }
     };
 
     const handleForgotPassword = () => {
@@ -35,7 +53,7 @@ export default function LoginScreen() {
                 <View style={styles.form}>
                     <Input
                         placeholder="Admin Unique ID"
-                        value={id}
+                        value={uniqueId}
                         onChangeText={setId}
                     />
                     <Input
@@ -53,7 +71,7 @@ export default function LoginScreen() {
                 </View>
 
                 <View style={styles.footer}>
-                    <Button title="Continue" onPress={handleLogin} />
+                    <Button title={loading ? 'Loading...' : 'Continue'} onPress={handleLogin} disabled={loading}/>
                 </View>
             </View>
         </SafeAreaView>
