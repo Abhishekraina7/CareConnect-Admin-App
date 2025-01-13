@@ -10,28 +10,15 @@ export default function AdminHomeScreen() {
         <SafeAreaView style={styles.container}>
                 <Header 
                 name="Admin"  // Assuming you will pass the admin name here
-                uniqueId="274572abcd" // Pass the actual unique ID if needed
+                uniqueId="admin@1234" // Pass the actual unique ID if needed
             />
 
-            <DateSelector />
+          <View style={styles.centerDateSelector}>
+                <DateSelector />
+            </View>
 
             <ScrollView style={styles.scrollContainer}>
-                {/* Example pending requests */}
-                <View style={styles.requestCard}>
-                    <Text style={styles.requestText}>Sarvesh, Ward no. 3, Bed-9</Text>
-                    <Text style={styles.requestDetails}>Chest pain urgent check-up</Text>
-                    <Text style={styles.requestTime}>1:15 p.m. 07.12.2024</Text>
-                </View>
-                <View style={styles.requestCard}>
-                    <Text style={styles.requestText}>Ronin, Ward no. 3, Bed-12</Text>
-                    <Text style={styles.requestDetails}>Blood vomit urgent check-up</Text>
-                    <Text style={styles.requestTime}>1:15 p.m. 10.12.2024</Text>
-                </View>
-                <View style={styles.requestCard}>
-                    <Text style={styles.requestText}>Warren, Ward no. 3, Bed-5</Text>
-                    <Text style={styles.requestDetails}>Eyes turning yellow, urgent check-up</Text>
-                    <Text style={styles.requestTime}>1:15 p.m. 11.12.2024</Text>
-                </View>
+              
             </ScrollView>
             <View style={styles.buttonContainer}>
                 <TouchableOpacity 
@@ -57,9 +44,13 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
     },
+    centerDateSelector: {
+        justifyContent: 'center', 
+        alignItems: 'center', 
+    },
     scrollContainer: {
         marginHorizontal: 10,
-        marginBottom: 20,
+        marginBottom: 70,
         paddingHorizontal: 10, 
     },
     requestCard: {
@@ -82,7 +73,7 @@ const styles = StyleSheet.create({
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        marginBottom: 20,
+        marginBottom: 70,
     },
     actionButton: {
         backgroundColor: '#8B0000',
@@ -94,5 +85,6 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#FFFFFF',
         fontWeight: 'bold',
+        fontSize: 16,
     },
 });

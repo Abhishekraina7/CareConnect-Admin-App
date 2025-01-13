@@ -22,7 +22,7 @@ export default function Header({ name, uniqueId }) {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#8B0000',
-        padding: 40,
+        padding: 80,
         borderBottomLeftRadius: 20,
         borderBottomRightRadius: 20,
         flexDirection: 'row', 
@@ -30,8 +30,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between', 
     },
     profileImage: {
-        width: 70,
-        height: 70,
+        width: 90,
+        height: 90,
         borderRadius: 50,
     },
     detailsSection: {
@@ -39,21 +39,21 @@ const styles = StyleSheet.create({
         flex: 1, 
     },
     welcomeText: {
-        fontSize: 16,
+        fontSize: 25,
         color: '#FFF',
     },
     nameText: {
-        fontSize: 24,
+        fontSize: 30,
         fontWeight: 'bold',
         color: '#FFF',
     },
     detailText: {
-        fontSize: 14,
+        fontSize: 16,
         color: '#FFF',
         marginTop: 4,
     },
     emergencyButton: {
-        margin: 5,
+        margin: 10,
     },
     circle: {
         width: 60,

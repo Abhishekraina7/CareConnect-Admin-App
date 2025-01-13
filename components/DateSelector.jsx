@@ -53,13 +53,14 @@ export default function DateSelector() {
 
 const styles = StyleSheet.create({
     container: {
-        flexGrow: 0,
+        flexGrow: 1,
         marginVertical: 10,
         padding: 10,
+        alignItems: 'center',
     },
     dateItem: {
         alignItems: 'center',
-        padding: 10,
+        padding: 5,
         marginHorizontal: 5,
         borderRadius: 15,
         width: 60,
