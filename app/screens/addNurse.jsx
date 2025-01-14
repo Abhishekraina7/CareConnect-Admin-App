@@ -49,7 +49,7 @@ const AddNurseScreen = () => {
       setNurses(response.data); 
     } catch (error) {
       console.error('Error fetching nurses:', error);
-    }
+   }
   };
 
   useEffect(() => { 
@@ -143,26 +143,7 @@ const AddNurseScreen = () => {
         </TouchableOpacity>
       </ScrollView>
 
-      {/* Swipeable Nurse List */}
-      <FlatList
-        data={nurses}
-        renderItem={({ item }) => (
-          <Swipeable
-            renderRightActions={renderRightActions}
-            onSwipeableRightOpen={() => handleSwipeRight(item)}
-          >
-            <View style={styles.nurseItem}>
-              <Text style={styles.nurseDetail}>Nurse ID: {item.nurseId}</Text>
-              <Text style={styles.nurseDetail}>Name: {item.name}</Text>
-              <Text style={styles.nurseDetail}>Mobile/Email: {item.mobileOrEmail}</Text>
-              <Text style={styles.nurseDetail}>Department: {item.department}</Text>
-              <Text style={styles.nurseDetail}>Ward No: {item.wardNo}</Text>
-            </View>
-          </Swipeable>
-        )}
-        keyExtractor={(item) => item.nurseId}
-        style={styles.nurseList}
-      />
+      
     </SafeAreaView>
     </GestureHandlerRootView>
   );
