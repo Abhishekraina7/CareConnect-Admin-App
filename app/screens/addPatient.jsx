@@ -168,26 +168,7 @@ const AddPatientScreen = () => {
           </TouchableOpacity>
         </ScrollView>
 
-        {/* Swipeable Patient List */}
-        <FlatList
-          data={patients}
-          renderItem={({ item }) => (
-            <Swipeable
-              renderRightActions={renderRightActions}
-              onSwipeableRightOpen={() => handleSwipeRight(item)}
-            >
-              <View style={styles.patientItem}>
-                <Text style={styles.patientDetail}>Patient ID: {item.patientId}</Text>
-                <Text style={styles.patientDetail}>Name: {item.name}</Text>
-                <Text style={styles.patientDetail}>Mobile: {item.mobile}</Text>
-                <Text style={styles.patientDetail}>Diagnosis: {item.diagnosis}</Text>
-                <Text style={styles.patientDetail}>Ward/Bed No: {item.wardBedNo}</Text>
-                <Text style={styles.patientDetail}>Admit Date: {item.admitDate}</Text>
-              </View>
-            </Swipeable>
-          )}
-          keyExtractor={(item) => item.patientId}
-        />
+       
       </SafeAreaView>
     </GestureHandlerRootView>
   );
