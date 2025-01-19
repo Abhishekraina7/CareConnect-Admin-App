@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
         width: 60,
     },
     selectedDate: {
-        backgroundColor: '#8B0000',
+        backgroundColor: '#4a1be4',
     },
     dayNumber: {
         fontSize: 18,

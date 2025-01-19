@@ -14,10 +14,12 @@ import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons'; // For add and search icons
 import { useFocusEffect } from '@react-navigation/native';
 
+
 const NurseListScreen = () => {
   const [nurses, setNurses] = useState([]);
   const [columns, setColumns] = useState(5);
   const [searchQuery, setSearchQuery] = useState('');
+
 
 
   // Load nurse list from the backend
@@ -25,10 +27,30 @@ const NurseListScreen = () => {
     try {
       const response = await axios.get('http://localhost:5000/api/nurses');  // Replace with your backend URL
       setNurses(response.data);
+      await AsyncStorage.setItem('nurseList', JSON.stringify(response.data));
     } catch (error) {
+
       console.error('Failed to load nurse data:', error);
+      const storedNurses = await AsyncStorage.getItem('nurseList');
+      if (storedNurses) {
+        setNurses(JSON.parse(storedNurses));
+      }
     }
   };
+  useEffect(() => {
+    const saveNursesToStorage = async () => {
+      try {
+        await AsyncStorage.setItem('nurseList', JSON.stringify(nurses));
+      } catch (error) {
+        console.error('Failed to save nurse data to AsyncStorage:', error);
+      }
+    };
+    saveNursesToStorage();
+  }, [nurses]);
+ 
+
+
+
 
   // Handle adding a new nurse (navigate to AddNurse screen)
   const handleAddNurse = () => {
@@ -142,7 +164,7 @@ const NurseListScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: '#FFF' },
+  container: { flex: 1, padding: 20, backgroundColor: '#FFF', position: 'relative', },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -159,14 +181,14 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   addButton: {
-    backgroundColor: '#B22222',
+    backgroundColor: '#5b50af',
     padding: 10,
     borderRadius: 5,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#B22222',
+    backgroundColor: '#5b50af',
     borderRadius: 8,
     padding: 5,
     marginBottom: 20,
@@ -197,8 +219,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 2,
-    height:200,
-    width:250,
+    height:250,
+    width:270,
     
   },
   nurseInfo: {
@@ -210,7 +232,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#8B0000',
+    backgroundColor: '#5b50af',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,
@@ -253,10 +275,12 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     position: 'absolute',
-    right: 10,
-    top: 10,
-    backgroundColor: 'red',
-    padding: 5,
+    bottom: 20, // Distance from the bottom edge
+    left: '55%', // Center horizontally
+    transform: [{ translateX: -50 }], // Adjust for exact centering
+    
+    backgroundColor: '#5b50af',
+    padding: 9,
     borderRadius: 5,
   },
   deleteButtonText: {
