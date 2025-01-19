@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 export default function Header({ name, uniqueId }) {
     return (
         <View style={styles.container}>
-            <Image source={require("../assets/images/adminimage.png")} style={styles.profileImage} />
+            <Image source={require("../assets/images/admin2.png")} style={styles.profileImage} />
             <View style={styles.detailsSection}>
                 <Text style={styles.welcomeText}>Welcome,</Text>
                 <Text style={styles.nameText}>{name}</Text>
@@ -21,7 +21,7 @@ export default function Header({ name, uniqueId }) {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#8B0000',
+        backgroundColor: '#5b50af',
         padding: 80,
         borderBottomLeftRadius: 20,
         borderBottomRightRadius: 20,
@@ -30,8 +30,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between', 
     },
     profileImage: {
-        width: 90,
-        height: 90,
+        width: 120,
+        height:120,
         borderRadius: 50,
     },
     detailsSection: {

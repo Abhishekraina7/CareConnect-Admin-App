@@ -11,6 +11,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 const AddPatientScreen = () => {
   const [patientId, setPatientId] = useState('');
   const [name, setName] = useState('');
+  const [dateofBirth, setDateofBirth] = useState('');
   const [diagnosis, setDiagnosis] = useState('');
   const [wardBedNo, setWardBedNo] = useState('');
   const [mobile, setMobile] = useState('');
@@ -20,13 +21,13 @@ const AddPatientScreen = () => {
   
   const handleAddPatient = async () => {
    
-    if (!patientId || !name || !diagnosis || !wardBedNo || !mobile || !admitDate) {
+    if (!patientId || !name || !dateofBirth || !diagnosis || !wardBedNo || !mobile || !admitDate) {
       Alert.alert('Error', 'Please fill all fields.');
       return;
     }
 
     // Patient data to send to the backend
-    const newPatient = { patientId, name, diagnosis, wardBedNo, mobile, admitDate };
+    const newPatient = { patientId, name, dateofBirth, diagnosis, wardBedNo, mobile, admitDate };
 
     try {
       // Send data to backend API (POST request)
@@ -37,6 +38,8 @@ const AddPatientScreen = () => {
         setPatients([...patients, newPatient]);
         setPatientId('');
         setName('');
+        setDateofBirth('');
+
         setDiagnosis('');
         setWardBedNo('');
         setMobile('');
@@ -120,6 +123,16 @@ const AddPatientScreen = () => {
               onChangeText={setName}
             />
           </View>
+         <View style={styles.inputRow}>
+            <Text style={styles.label}>Date of Birth:</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter Date of Birth (DD-MM-YYYY)"
+              value={dateofBirth}
+              onChangeText={setDateofBirth}
+            />
+          </View>
+
 
           <View style={styles.inputRow}>
             <Text style={styles.label}>Mobile Number:</Text>
@@ -212,7 +225,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   button: {
-    backgroundColor: '#8B0000',
+    backgroundColor: '#5b50af',
     padding: 15,
     borderRadius: 5,
     alignItems: 'center',

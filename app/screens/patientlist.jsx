@@ -25,8 +25,13 @@ const PatientListScreen = () => {
     try {
       const response = await axios.get('http://localhost:5000/api/patients');
         setPatients(response.data);
+        await AsyncStorage.setItem('patientList', JSON.stringify(response.data));
     } catch (error) {
       console.error('Failed to load patient data:', error);
+      const storedPatients = await AsyncStorage.getItem('patientList');
+      if (storedPatients) {
+        setPatients(JSON.parse(storedPatients));
+      }
     }
   };
   // Save the patient list to AsyncStorage
@@ -37,6 +42,18 @@ const PatientListScreen = () => {
       console.error('Failed to save patient data:', error);
     }
   };
+  useEffect(() => {
+    const savePatientsToStorage = async () => {
+        try {
+            await AsyncStorage.setItem('patientList', JSON.stringify(patients));
+        } catch (error) {
+            console.error('Failed to save patient data to AsyncStorage:', error);
+        }
+    };
+
+    savePatientsToStorage();
+}, [patients]);
+
 
 
 
@@ -120,7 +137,12 @@ const PatientListScreen = () => {
                   <Text style={styles.phone}>{item.mobile}</Text> {/* Updated from 'phone' to 'mobile' */}
                 </View>
               </View>
+             
               <View style={styles.patientDetails}>
+              <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Date Of Birth: </Text>
+                  <Text style={styles.detailValue}>{formatAdmitDate(item.dateofBirth)}</Text>
+                </View>
                 <View style={styles.detailRow}>
                   <Text style={styles.detailLabel}>Diagnosis: </Text>
                   <Text style={styles.detailValue}>{item.diagnosis || 'N/A'}</Text> {/* Updated from 'condition' to 'diagnosis' */}
@@ -159,7 +181,7 @@ const PatientListScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: '#FFF' },
+  container: { flex: 1, padding: 20, backgroundColor: '#FFF',  position: 'relative',  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -176,14 +198,14 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   addButton: {
-    backgroundColor: '#B22222',
+    backgroundColor: '#5b50af',
     padding: 10,
     borderRadius: 5,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#B22222',
+    backgroundColor: '#5b50af',
     borderRadius: 8,
     padding: 5,
     marginBottom: 20,
@@ -216,8 +238,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
     position: 'relative',
-    height:200,
-    width:250,
+    height:300,
+    width:270,
   },
   patientInfo: {
     flexDirection: 'row',
@@ -228,7 +250,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#8B0000',
+    backgroundColor: '#5b50af',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,
@@ -271,12 +293,20 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     position: 'absolute',
-    right: 10,
-    top: 10,
-    backgroundColor: 'red',
-    padding: 10,
-    borderRadius: 20,
+    bottom: 20, // Distance from the bottom edge
+    left: '55%', // Center horizontally
+    transform: [{ translateX: -50 }], // Adjust for exact centering
+    
+    
+    backgroundColor: '#5b50af',
+    padding: 8,
+    borderRadius: 5,
+    
   },
+  deleteButtonText:{
+    color: '#FFF',
+    fontWeight: 'bold',
+  }
 });
 
 export default PatientListScreen;
