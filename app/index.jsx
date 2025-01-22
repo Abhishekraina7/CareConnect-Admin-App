@@ -1,53 +1,74 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Alert } from 'react-native';
 import Logo from '../components/logo';
 import Input from '../components/input'
 import Button from '../components/Button';
 import { router } from 'expo-router';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export default function LoginScreen() {
     const [uniqueId, setId] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
 
+    // Verfiy if the user is already logged in by checking token on local storage which is set after successful login
+    useEffect(() => {
+        const checkToken = async () => {
+            const token = await AsyncStorage.getItem('token');
+            if (token) {
+                router.push('/screens/adminHome');
+            }
+        };
+        checkToken();
+    }, []);
+
+
     const handleLogin = async () => {
         // Handle login logic here
         setLoading(true);
         try {
             // Make a POST request to the backend API
-            await axios.post('http://localhost:5000/api/admin', {
+            const response = await axios.post('http://localhost:5000/api/admin', {
                 uniqueId,
                 password,
             });
-        Alert.alert('Success', 'Login successful');
-        router.push('/screens/adminHome');
+
+            // Extractd the token from the response
+            const { token } = response.data;
+
+            // Saveed the token to AsyncStorage
+            await AsyncStorage.setItem('token', token);
+            Alert.alert('Success', 'Login successful');
+            router.push('/screens/adminHome');
         }
         catch (error) {
             if (error.response) {
                 Alert.alert('Error', error.response.data.message || 'Invalid login credentials');
+                console.error('Error logging in:', error.response.data.message);
             } else {
                 Alert.alert('Error', 'Something went wrong. Please try again.');
             }
         } finally {
             setLoading(false);
-            }
+        }
     };
 
     const handleForgotPassword = () => {
         console.log('Forgot password pressed');
         router.push('/screens/adminforgotpassword')
-       
+
     };
 
     return (
         <SafeAreaView style={styles.container}>
-           
+
             <View style={styles.content}>
                 <Logo />
                 <Text style={styles.title}>CareConnect</Text>
                 <Text style={styles.subtitle}>
-                Effortless communication for better patient care.
+                    Effortless communication for better patient care.
                 </Text>
                 <Text style={styles.subtitle}>Login in with your credentials</Text>
                 <View style={styles.form}>
@@ -69,9 +90,8 @@ export default function LoginScreen() {
                         <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
                     </TouchableOpacity>
                 </View>
-
                 <View style={styles.footer}>
-                    <Button title={loading ? 'Loading...' : 'Continue'} onPress={handleLogin} disabled={loading}/>
+                    <Button title={loading ? 'Loading...' : 'Continue'} onPress={handleLogin} disabled={loading} />
                 </View>
             </View>
         </SafeAreaView>
