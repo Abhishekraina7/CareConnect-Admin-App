@@ -13,7 +13,7 @@ export default function LoginScreen() {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
 
-    // Verfiy if the user is already logged in by checking token on local storage which is set after successful login
+    // Verfiy if the Admin is already logged in by checking token on local storage which is set after successful login
     useEffect(() => {
         const checkToken = async () => {
             const token = await AsyncStorage.getItem('token');
@@ -30,7 +30,7 @@ export default function LoginScreen() {
         setLoading(true);
         try {
             // Make a POST request to the backend API
-            const response = await axios.post('http://localhost:5000/api/admin', {
+            const response = await axios.post('http://192.168.45.108:5000/api/admin', {
                 uniqueId,
                 password,
             });

@@ -17,15 +17,15 @@ import { useFocusEffect } from '@react-navigation/native';
 
 const PatientListScreen = () => {
   const [patients, setPatients] = useState([]);
- const [columns, setColumns] = useState(5);
+  const [columns, setColumns] = useState(5);
   const [searchQuery, setSearchQuery] = useState('');
 
   // Load the patient list from AsyncStorage
   const loadPatients = async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/patients');
-        setPatients(response.data);
-        await AsyncStorage.setItem('patientList', JSON.stringify(response.data));
+      setPatients(response.data);
+      await AsyncStorage.setItem('patientList', JSON.stringify(response.data));
     } catch (error) {
       console.error('Failed to load patient data:', error);
       const storedPatients = await AsyncStorage.getItem('patientList');
@@ -34,7 +34,7 @@ const PatientListScreen = () => {
       }
     }
   };
-  // Save the patient list to AsyncStorage
+
   const savePatients = async (patientsToSave) => {
     try {
       await AsyncStorage.setItem('patientList', JSON.stringify(patientsToSave));
@@ -42,17 +42,18 @@ const PatientListScreen = () => {
       console.error('Failed to save patient data:', error);
     }
   };
+
   useEffect(() => {
     const savePatientsToStorage = async () => {
-        try {
-            await AsyncStorage.setItem('patientList', JSON.stringify(patients));
-        } catch (error) {
-            console.error('Failed to save patient data to AsyncStorage:', error);
-        }
+      try {
+        await AsyncStorage.setItem('patientList', JSON.stringify(patients));
+      } catch (error) {
+        console.error('Failed to save patient data to AsyncStorage:', error);
+      }
     };
 
     savePatientsToStorage();
-}, [patients]);
+  }, [patients]);
 
 
 
@@ -74,7 +75,7 @@ const PatientListScreen = () => {
   // Handle deleting a patient from the list
   const handleDeletePatient = async (patientId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/patients/${patientId}`,{
+      await axios.delete(`http://localhost:5000/api/patients/${patientId}`, {
         method: 'DELETE',
       });
       // Remove the deleted patient from the list without reloading from backend
@@ -119,7 +120,7 @@ const PatientListScreen = () => {
         </TouchableOpacity>
       </View>
       <FlatList
-      key={columns}
+        key={columns}
         data={patients}
         renderItem={({ item }) => {
           const initials = item.name
@@ -137,9 +138,9 @@ const PatientListScreen = () => {
                   <Text style={styles.phone}>{item.mobile}</Text> {/* Updated from 'phone' to 'mobile' */}
                 </View>
               </View>
-             
+
               <View style={styles.patientDetails}>
-              <View style={styles.detailRow}>
+                <View style={styles.detailRow}>
                   <Text style={styles.detailLabel}>Date Of Birth: </Text>
                   <Text style={styles.detailValue}>{formatAdmitDate(item.dateofBirth)}</Text>
                 </View>
@@ -160,7 +161,7 @@ const PatientListScreen = () => {
                   <Text style={styles.detailValue}>{formatAdmitDate(item.admitDate)}</Text>
                 </View>
               </View>
-              
+
               {/* Delete Button */}
               <TouchableOpacity
                 style={styles.deleteButton}
@@ -174,14 +175,14 @@ const PatientListScreen = () => {
         keyExtractor={(item) => item.patientId}
         numColumns={columns} // Use dynamic column count
         contentContainerStyle={styles.listContainer}
-        
+
       />
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: '#FFF',  position: 'relative',  },
+  container: { flex: 1, padding: 20, backgroundColor: '#FFF', position: 'relative', },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -230,16 +231,16 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 20,
     margin: 10, // Adjust margin for horizontal alignment
-    
+
     shadowColor: '#000',
-    
+
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 2,
     position: 'relative',
-    height:300,
-    width:270,
+    height: 300,
+    width: 270,
   },
   patientInfo: {
     flexDirection: 'row',
@@ -296,14 +297,14 @@ const styles = StyleSheet.create({
     bottom: 20, // Distance from the bottom edge
     left: '55%', // Center horizontally
     transform: [{ translateX: -50 }], // Adjust for exact centering
-    
-    
+
+
     backgroundColor: '#5b50af',
     padding: 8,
     borderRadius: 5,
-    
+
   },
-  deleteButtonText:{
+  deleteButtonText: {
     color: '#FFF',
     fontWeight: 'bold',
   }

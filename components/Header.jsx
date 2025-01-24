@@ -4,17 +4,21 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 export default function Header({ name, uniqueId }) {
     return (
         <View style={styles.container}>
+
             <Image source={require("../assets/images/admin2.png")} style={styles.profileImage} />
+
             <View style={styles.detailsSection}>
-                <Text style={styles.welcomeText}>Welcome,</Text>
+                <Text style={styles.welcomeText}>Welcome</Text>
                 <Text style={styles.nameText}>{name}</Text>
                 <Text style={styles.detailText}>Unique ID: {uniqueId}</Text>
             </View>
+
             <TouchableOpacity style={styles.emergencyButton}>
                 <View style={styles.circle}>
                     <Image source={require("../assets/images/emergencyicon.png")} style={styles.buttonImage} />
                 </View>
             </TouchableOpacity>
+
         </View>
     );
 }
@@ -25,43 +29,50 @@ const styles = StyleSheet.create({
         padding: 80,
         borderBottomLeftRadius: 20,
         borderBottomRightRadius: 20,
-        flexDirection: 'row', 
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
-        justifyContent: 'space-between', 
+        position: 'relative',
     },
     profileImage: {
-        width: 120,
-        height:120,
-        borderRadius: 50,
+        width: 90,
+        height: 90,
+        borderRadius: 30,
+        right: 40,
     },
     detailsSection: {
         alignItems: 'center',
-        flex: 1, 
+        flex: 3,
     },
     welcomeText: {
-        fontSize: 25,
+        fontSize: 20,
         color: '#FFF',
+        right: 20,
     },
     nameText: {
         fontSize: 30,
         fontWeight: 'bold',
         color: '#FFF',
+        right: 20,
     },
     detailText: {
         fontSize: 16,
         color: '#FFF',
         marginTop: 4,
+        right: 20,
     },
     emergencyButton: {
-        margin: 10,
+        position: 'absolute',
+        top: 50,
+        right: 20,
     },
     circle: {
-        width: 60,
-        height: 60,
+        width: 50,
+        height: 50,
         borderRadius: 30,
-        backgroundColor: '#FFF', 
+        backgroundColor: '#FFF',
         alignItems: 'center',
-        justifyContent: 'center', 
+        justifyContent: 'center',
     },
     buttonImage: {
         width: 30,

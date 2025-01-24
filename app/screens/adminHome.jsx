@@ -9,10 +9,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function AdminHomeScreen() {
     const [numberOfPatients, setNumberOfPatients] = useState(0);
     const [numberOfNurses, setNumberOfNurses] = useState(0);
-    
     const [loading, setLoading] = useState(true);
     const [loadingNurses, setLoadingNurses] = useState(true);
     const [error, setError] = useState(null);
+
     const fetchPatientCount = async () => {
         try {
             setLoading(true);
@@ -26,6 +26,7 @@ export default function AdminHomeScreen() {
             setLoading(false);
         }
     };
+
     const fetchNurseCount = async () => {
         try {
             setLoadingNurses(true);
@@ -44,24 +45,25 @@ export default function AdminHomeScreen() {
         fetchPatientCount();
         fetchNurseCount();
     }, []);
+
     return (
         <SafeAreaView style={styles.container}>
-                <Header 
+            <Header
                 name="Admin"  // Assuming you will pass the admin name here
                 uniqueId="Admin@2025" // Pass the actual unique ID if needed
             />
 
-          <View style={styles.centerDateSelector}>
+            <View style={styles.centerDateSelector}>
                 <DateSelector />
             </View>
 
             <ScrollView style={styles.scrollContainer}>
 
-              
+
             </ScrollView>
-            
-                {/* Patient Box */}
-                <View style={styles.statsContainer}>
+
+            {/* Patient Box */}
+            <View style={styles.statsContainer}>
                 {/* Patient Box */}
                 <View style={styles.statsBox}>
                     <Text style={styles.statsLabel}>Patients</Text>
@@ -73,7 +75,7 @@ export default function AdminHomeScreen() {
                         <Text style={styles.statsNumber}>{numberOfPatients}</Text>
                     )}
                 </View>
-                
+
                 {/* Nurse Box */}
                 <View style={styles.statsBox}>
                     <Text style={styles.statsLabel}>Nurses</Text>
@@ -87,14 +89,14 @@ export default function AdminHomeScreen() {
                 </View>
             </View>
             <View style={styles.buttonContainer}>
-                <TouchableOpacity 
-                    style={styles.actionButton} 
+                <TouchableOpacity
+                    style={styles.actionButton}
                     onPress={() => router.push('/screens/patientlist')}
                 >
                     <Text style={styles.buttonText}>Patient List</Text>
                 </TouchableOpacity>
-                <TouchableOpacity 
-                    style={styles.actionButton} 
+                <TouchableOpacity
+                    style={styles.actionButton}
                     onPress={() => router.push('/screens/nurselist')}
                 >
                     <Text style={styles.buttonText}>Nurse List</Text>
@@ -111,13 +113,13 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     centerDateSelector: {
-        justifyContent: 'center', 
-        alignItems: 'center', 
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     scrollContainer: {
         marginHorizontal: 10,
         marginBottom: 70,
-        paddingHorizontal: 10, 
+        paddingHorizontal: 10,
     },
     requestCard: {
         backgroundColor: '#f2f2f2',
